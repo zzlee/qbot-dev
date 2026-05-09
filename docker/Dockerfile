@@ -27,14 +27,16 @@ RUN useradd -m -s /bin/bash -u $UID -g $GID build && \
     echo 'build:build' | chpasswd && \
     adduser build sudo
 
+# Source ROS 2 globally (survives volume mount of /home/build)
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /etc/bash.bashrc
+
 # Initialize rosdep as root
 RUN rosdep init || true
 
 # Create a workspace directory and set permissions
-WORKDIR /ros2_ws
-RUN chown -R build:build /ros2_ws
+RUN mkdir -p /ros2_ws && chown -R build:build /ros2_ws
 
-# Switch to 'build' user for remaining setup
+# Switch to 'build' user for user-specific setup
 USER build
 WORKDIR /home/build
 
@@ -44,9 +46,15 @@ RUN rosdep update
 # Install OpenCode as build user
 RUN curl -fsSL https://opencode.ai/install | bash
 
-# Set up the shell to source ROS 2 automatically and ensure OpenCode is in PATH
-RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+# Switch back to root to install opencode globally
+USER root
+RUN cp /home/build/.opencode/bin/opencode /usr/local/bin/ && \
+    chmod 755 /usr/local/bin/opencode && \
+    echo 'export PATH="/usr/local/bin:$PATH"' > /etc/profile.d/opencode.sh
+
+# Switch back to build user
+USER build
+WORKDIR /home/build
 
 # Default command: start bash
 CMD ["bash"]
-
