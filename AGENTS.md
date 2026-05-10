@@ -3,8 +3,8 @@
 ## Quick start
 
 ```bash
-make build        # build Docker image for native platform
-make run          # start container (mounts $(pwd) to /home/build)
+cd dev-env && make build        # build Docker image for native platform
+cd dev-env && make run          # start container (mounts $(pwd) to /home/build)
 ```
 
 Inside container: `cd /home/build/src`, create packages, `colcon build`.
@@ -13,12 +13,12 @@ Inside container: `cd /home/build/src`, create packages, `colcon build`.
 
 | Command | What |
 |---|---|
-| `make build` | Native platform build |
-| `make build-arm64` | Cross-build for arm64 (needs `make setup-buildx` once) |
-| `make build-amd64` | Cross-build for amd64 |
-| `make run` | Run native container |
-| `make run-arm64` | Run arm64 container |
-| `make setup-buildx` | One-time: create buildx multiarch builder |
+| `cd dev-env && make build` | Native platform build |
+| `cd dev-env && make build-arm64` | Cross-build for arm64 (needs `make setup-buildx` once) |
+| `cd dev-env && make build-amd64` | Cross-build for amd64 |
+| `cd dev-env && make run` | Run native container |
+| `cd dev-env && make run-arm64` | Run arm64 container |
+| `cd dev-env && make setup-buildx` | One-time: create buildx multiarch builder |
 
 `make build` passes `--build-arg UID=$(id -u) --build-arg GID=$(id -g)` automatically so the `build` user inside the container matches host ownership.
 
@@ -33,7 +33,7 @@ Inside container: `cd /home/build/src`, create packages, `colcon build`.
 ## Development workflow
 
 1. Create ROS 2 packages under `src/` on the host.
-2. `make build` if dependencies changed, then `make run`.
+2. `cd dev-env && make build` if dependencies changed, then `cd dev-env && make run`.
 3. Inside: `colcon build`, then `source install/setup.bash`, then `ros2 run <pkg> <node>`.
 4. Exit container (Ctrl+D) — all source files persist on host in `src/`.
 
