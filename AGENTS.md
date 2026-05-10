@@ -4,6 +4,7 @@
 
 ```bash
 make build        # build Docker image for native platform
+make build-app    # build ROS 2 apps from host (headless)
 make run          # start container (mounts $(pwd) to /home/build)
 ```
 
@@ -16,6 +17,8 @@ Inside container: `cd /home/build/src`, create packages, `colcon build`.
 | `make build` | Native platform build |
 | `make build-arm64` | Cross-build for arm64 (needs `make setup-buildx` once) |
 | `make build-amd64` | Cross-build for amd64 |
+| `make build-app` | Build ROS 2 application from host (headless) |
+| `make test-app` | Run ROS 2 tests from host (headless) |
 | `make run` | Run native container |
 | `make run-arm64` | Run arm64 container |
 | `make setup-buildx` | One-time: create buildx multiarch builder |
@@ -33,9 +36,10 @@ Inside container: `cd /home/build/src`, create packages, `colcon build`.
 ## Development workflow
 
 1. Create ROS 2 packages under `src/` on the host.
-2. `make build` if dependencies changed, then `make run`.
-3. Inside: `colcon build`, then `source install/setup.bash`, then `ros2 run <pkg> <node>`.
-4. Exit container (Ctrl+D) — all source files persist on host in `src/`.
+2. Build using `make build-app` (headless) or `make run` (interactive).
+3. If using interactive mode: Inside: `colcon build`, then `source install/setup.bash`, then `ros2 run <pkg> <node>`.
+4. Run tests using `make test-app` (headless).
+5. Exit container (Ctrl+D) — all source files persist on host in `src/`.
 
 ## Important
 
