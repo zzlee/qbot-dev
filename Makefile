@@ -1,7 +1,7 @@
 IMAGE_NAME ?= ros2_dev
 DOCKER_DIR  := docker
 
-.PHONY: build build-arm64 build-amd64 run run-arm64 setup-buildx clean
+.PHONY: build build-arm64 build-amd64 run run-arm64 setup-buildx clean build-app test-app
 
 # Detect native architecture
 UNAME_M := $(shell uname -m)
@@ -55,6 +55,26 @@ run:
 # Run arm64 image
 run-arm64:
 	IMAGE=$(IMAGE_NAME):arm64 ./$(DOCKER_DIR)/run.sh arm64
+
+# Build the ROS 2 application from the host
+build-app:
+	@echo "Building ROS 2 application inside container..."
+	docker run --rm \
+		-v $(shell pwd):/home/build \
+		-w /home/build \
+		--net=host \
+		$(IMAGE_NAME) \
+		bash -c "source /opt/ros/jazzy/setup.bash && colcon build"
+
+# Run tests for the ROS 2 application
+test-app:
+	@echo "Running ROS 2 tests inside container..."
+	docker run --rm \
+		-v $(shell pwd):/home/build \
+		-w /home/build \
+		--net=host \
+		$(IMAGE_NAME) \
+		bash -c "source /opt/ros/jazzy/setup.bash && source install/setup.bash && colcon test && colcon test-result --all"
 
 # Set up buildx builder (one-time setup)
 setup-buildx:
