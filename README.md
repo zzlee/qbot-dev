@@ -5,8 +5,8 @@ ROS 2 Jazzy C++ development environment using Docker with multi-platform (amd64 
 ## Quick start
 
 ```bash
-cd dev-env && make build   # build Docker image
-cd dev-env && make run     # start container with current dir mounted
+make build   # build Docker image
+make run     # start container with current dir mounted
 ```
 
 Inside the container:
@@ -22,16 +22,17 @@ ros2 run <pkg> <node>
 
 | Command | Purpose |
 |---|---|
-| `cd dev-env && make build` | Build for native platform |
-| `cd dev-env && make build-arm64` | Cross-build for arm64 |
-| `cd dev-env && make run` | Start container |
-| `cd dev-env && make setup-buildx` | One-time buildx setup |
+| `make build` | Build for native platform |
+| `make build-arm64` | Cross-build for arm64 |
+| `make run` | Start container |
+| `make setup-buildx` | One-time buildx setup |
 
 ## Project layout
 
 ```
 ├── src/           # ROS 2 packages
-├── dev-env/        # Dockerfile, run script, Makefile
+├── docker/        # Dockerfile, run script
+├── Makefile       # Build/run targets
 └── AGENTS.md      # Dev workflow reference
 ```
 

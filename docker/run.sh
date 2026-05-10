@@ -11,7 +11,7 @@ elif [ "$PLATFORM" = "amd64" ]; then
 fi
 
 exec docker run -it \
-  -v "$(pwd)/../..:/home/build" \
+  -v "$(pwd):/home/build" \
   --net=host \
   --name ros2_container \
   "$IMAGE"
